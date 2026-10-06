@@ -1,0 +1,13 @@
+{
+  "name": "ibm-visitor-management-system",
+  "version": "1.0.0",
+  "description": "Employee Visitor Management System (MERN Stack) - IBM Industrial Visit Project",
+  "scripts": {
+    "backend": "cd backend && node server.js",
+    "frontend": "cd frontend && npm run dev",
+    "install:all": "npm --prefix backend install && npm --prefix frontend install"
+  },
+  "keywords": ["mern", "mongodb", "express", "react", "node", "visitor-management", "ibm"],
+  "author": "Kamalakanta Bera",
+  "license": "ISC"
+}

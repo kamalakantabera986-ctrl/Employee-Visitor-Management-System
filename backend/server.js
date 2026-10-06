@@ -36,8 +36,13 @@ const visitorRoutes = require('./routes/visitorRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api/visitors', visitorRoutes);
 
-// Health Check / Root route
-app.get('/', (req, res) => {
+// Serve built frontend assets in production if dist exists
+const path = require('path');
+const fs = require('fs');
+const frontendDist = path.join(__dirname, '../frontend/dist');
+
+// API Status & Health Check endpoints
+app.get('/api', (req, res) => {
     res.json({
         message: '🏢 Employee Visitor Management System API is running smoothly.',
         version: '1.0.0',
@@ -54,11 +59,6 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Serve built frontend assets in production if dist exists
-const path = require('path');
-const fs = require('fs');
-const frontendDist = path.join(__dirname, '../frontend/dist');
-
 if (fs.existsSync(frontendDist)) {
     app.use(express.static(frontendDist));
     app.get('*', (req, res, next) => {
@@ -66,9 +66,14 @@ if (fs.existsSync(frontendDist)) {
         res.sendFile(path.join(frontendDist, 'index.html'));
     });
 } else {
-    // 404 Handler for API or dev
-    app.use((req, res) => {
-        res.status(404).json({ error: 'Endpoint not found' });
+    // If frontend dist not yet built, show API status at root
+    app.get('/', (req, res) => {
+        res.json({
+            message: '🏢 Employee Visitor Management System API is running smoothly.',
+            version: '1.0.0',
+            databaseStatus: mongoose.connection.readyState === 1 ? 'Connected' : 'Connecting/Disconnected',
+            timestamp: new Date().toISOString()
+        });
     });
 }
 
